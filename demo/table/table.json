@@ -1,0 +1,77 @@
+{
+    "code": 0,
+    "msg": "",
+    "count": 7,
+    "data": [
+        {
+            "username": "test1",
+            "sex": "男",
+            "city": "天津",
+            "sign": "test",
+            "experience": "100",
+            "score": "100",
+            "classify": "程序猿",
+            "wealth": "0"
+        },
+        {
+            "username": "test1",
+            "sex": "男",
+            "city": "天津",
+            "sign": "test",
+            "experience": "100",
+            "score": "100",
+            "classify": "程序猿",
+            "wealth": "0"
+        },
+        {
+            "username": "test1",
+            "sex": "男",
+            "city": "天津",
+            "sign": "test",
+            "experience": "100",
+            "score": "100",
+            "classify": "程序猿",
+            "wealth": "0"
+        },
+        {
+            "username": "test1",
+            "sex": "男",
+            "city": "天津",
+            "sign": "test",
+            "experience": "100",
+            "score": "100",
+            "classify": "程序猿",
+            "wealth": "0"
+        },
+        {
+            "username": "test1",
+            "sex": "男",
+            "city": "天津",
+            "sign": "test",
+            "experience": "100",
+            "score": "100",
+            "classify": "程序猿",
+            "wealth": "0"
+        },
+        {
+            "username": "test1",
+            "sex": "男",
+            "city": "天津",
+            "sign": "test",
+            "experience": "100",
+            "score": "100",
+            "classify": "程序猿",
+            "wealth": "0"
+        },
+        {
+            "username": "test1",
+            "sex": "男",
+            "city": "天津",
+            "sign": "test",
+            "experience": "100",
+            "score": "100",
+            "classify": "程序猿",
+            "wealth": "0"
+        }
+    ]
+}

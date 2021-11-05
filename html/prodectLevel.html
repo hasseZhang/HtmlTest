@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>富文本编辑器</title>
+        <link rel="stylesheet" href="../layui/css/layui.css">
+        <link rel="stylesheet" href="../css/style.css">
+        <link rel="stylesheet" href="../kindeditor/themes/default/default.css">
+        <style>
+            .layui-border-blue {
+                color: #00b0e6;
+                border-color: #00b0e6;
+            }
+            .dataTable {
+                position: relative;
+                left:7%;
+                width: 600px;
+            }
+            .layui-border-box{
+                box-sizing : content-box ;
+            }
+        </style>
+    </head>
+    <body>
+
+        <div style="border-bottom: lightgrey solid 1px;padding: 5px;">
+            <span style="color:lightgrey;">产品管理&nbsp;/&nbsp;</span>产品内容管理
+        </div>
+        <div id="page1">
+            <div class="demoTable" style="margin-top: 10px;">
+                <div class="layui-inline">
+                    <input class="layui-input" name="id" id="demoReload" autocomplete="off" placeholder="请输入产品名或ID">
+                </div>
+                <button class="layui-btn" data-type="reload">查询</button>
+                <button class="layui-btn" data-type="reload">查询全部层级</button>
+                <button class="layui-btn" id="addNew">新增</button>
+                <button class="layui-btn" data-type="reload">批量删除</button>
+            </div>
+
+            <table class="layui-hide" id="LAY_table_user" lay-filter="user"></table>
+        </div>
+        <div id="page2">
+            <div class="demoTable" style="margin-top: 10px;">
+                产品层级关系
+                <div class="layui-inline">
+                    <input class="layui-input" name="id" id="demoReload" autocomplete="off">
+                </div>
+                <button class="layui-btn" data-type="reload">查询</button>
+            </div>
+            <div>
+                <div style="float: left;width: 30%;margin: 5px 20px;">
+                    <div style="width: auto;height:38px;margin-bottom: 15px;">
+                        <span style="padding-left: 10px;color: lightslategrey;size: 10px;line-height: 38px;">主产品</span>
+                        <button class="layui-btn layui-btn-primary layui-border-blue createParent" style="float: right;">设定产品</button>
+                    </div>
+                    <div style="position: relative;border:lightslategrey 1px solid;height: 300px;text-align: center;">
+                        <ul style="display: none;" id="grand">
+                            <li style="background-color: lightskyblue;height: 30px; line-height: 30px;padding-left: 15px;">
+                                <div style="width: 95%;float: left;text-align: left;"></div>
+                                <i class="layui-icon layui-icon-triangle-r getChild"></i>
+                            </li>
+                        </ul>
+                        <div style="position:absolute;top: 140px;left:50%;width:500px;margin-left:-250px;" id="noInfo1">
+                            <div style="text-align: center;">所选产品暂无任何子产品，点击添加</div>
+                            <button class="layui-btn layui-btn-primary layui-border-blue createParent">新增产品</button>
+                        </div>
+                    </div>
+
+                </div>
+                <div style="float: left;width: 30%;margin: 5px 20px;">
+                    <div style="width: auto;height:38px;margin-bottom: 15px;">
+                        <span style="padding-left: 10px;color: lightslategrey;size: 10px;line-height: 38px;">主产品</span>
+                        <button class="layui-btn layui-btn-primary layui-border-blue getChild" style="float: right;">设定产品</button>
+                    </div>
+                    <div style="position: relative;border:lightslategrey 1px solid;height: 300px;text-align: center;">
+                        <ul style="display: none;" id="fellow">
+                            
+                        </ul>
+                        <div style="position:absolute;top: 140px;left:50%;width:500px;margin-left:-250px;" id="noInfo2">
+                            <div style="text-align: center;">所选产品暂无任何子产品，点击添加</div>
+                            <button class="layui-btn layui-btn-primary layui-border-blue getChild">新增产品</button>
+                        </div>
+                    </div>
+                </div>
+                <div style="float: left;width: 30%;margin: 5px 20px;">
+                    <div style="width: auto;height:38px;margin-bottom: 15px;">
+                        <span style="padding-left: 10px;color: lightslategrey;size: 10px;line-height: 38px;">主产品</span>
+                        <button class="layui-btn layui-btn-primary layui-border-blue getSon" style="float: right;">设定产品</button>
+                    </div>
+                    <div style="border:lightslategrey 1px solid;height: 300px;text-align: center;">
+                        <div style="position: relative;">
+                            <ul style="display: none;" id="son">
+                            </ul>
+                            <div style="position:absolute;top: 140px;left:50%;width:500px;margin-left:-250px;" id="noInfo3">
+                                <div style="text-align: center;">所选产品暂无任何子产品，点击添加</div>
+                                <button class="layui-btn layui-btn-primary layui-border-blue getSon">新增产品</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- <script type="text/html" id="barDemo">
+            <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+            <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+        </script> -->
+        <script type="text/html" id="richTextDialog">
+            <div class="demoTable" style="margin-top: 10px;width: 100%;">
+                <span style="margin-left: 7%;">产品层级关系</span>
+                <span style="margin-left: 23%;">
+                    <div class="layui-inline">
+                        <input class="layui-input" name="id" id="checkdata1" autocomplete="off">
+                    </div>
+                    <button class="layui-btn" lay-demotransferactive="search">查询</button>
+                    <!--lay-demotransferactive="getData"-->
+                    <button class="layui-btn" lay-demotransferactive="reload">重置</button>
+                </span>
+            </div>
+            <div id="test1" class="demo-transfer dataTable" style="margin-top: 20px;"></div>
+        </script>
+    </body>
+    <script src="../js/jquery.min.js"></script>
+    <script src="../layui/layui.all.js"></script>
+    <script charset="utf-8" src="../kindeditor/kindeditor-all-min.js"></script>
+    <script charset="utf-8" src="../kindeditor/lang/zh-CN.js"></script>
+    <script>
+        layer.ready(function(){
+                layui.use([
+                'transfer', 'table', 'layer', 'util'
+            ], function () {
+                var $ = layui.$,
+                transfer = layui.transfer,
+                util = layui.util;
+                var table = layui.table;
+                window.layer = layui.layer;
+                var data1 = [
+                    {
+                        "value": "1",
+                        "title": "尊享会员"
+                    },
+                    {
+                        "value": "2",
+                        "title": "影视会员"
+                    },
+                    {
+                        "value": "3",
+                        "title": "少儿会员"
+                    },
+                    {
+                        "value": "4",
+                        "title": "芒果会员"
+                    }, {
+                        "value": "5",
+                        "title": "奇异会员",
+                    }
+                ]
+                var data2 = [
+                    {
+                        "value": "7",
+                        "title": "爱家影视会员"
+                    },
+                    {
+                        "value": "8",
+                        "title": "爱家少儿会员"
+                    },
+                    {
+                        "value": "9",
+                        "title": "芒果会员"
+                    },
+                    {
+                        "value": "10",
+                        "title": "奇异TV会员"
+                    }, {
+                        "value": "11",
+                        "title": "健康尺会员",
+                    }
+                ]
+                var data3 = [
+                    {
+                        "value": "12",
+                        "title": "二级测试1"
+                    },
+                    {
+                        "value": "13",
+                        "title": "二级测试2"
+                    },
+                    {
+                        "value": "14",
+                        "title": "二级测试3"
+                    },
+                    {
+                        "value": "15",
+                        "title": "二级测试4"
+                    }, {
+                        "value": "16",
+                        "title": "二级测试5",
+                    }
+                ]
+    
+                var value1=0;
+                var value2=[];
+                var value3=[];
+                var granddata = "";
+            
+                //获取data1所有value
+                var valueall = function(){ 
+                    let arr =[];
+                    for(var i =0 ;i<data1.length;i++){
+                        arr.push(data1[i].value);
+                    }
+                    return arr;
+                };
+                // var dataarr = function(){
+                //     let arr = [];
+                //     for(var i =0 ;i<data1.length;i++){
+                //         arr.push(data1[i].title);
+                //     }
+                //     return arr;
+                // }
+                // 方法级渲染
+                table.render({
+                    elem: '#LAY_table_user',
+                    // url: 'file:///D:/work/HtmlTest/demo/table/table.json',
+                    // 瀏覽器不支持file：///的文件解析格式故注釋掉
+                    cols: [
+                        [
+                            {
+                                checkbox: true,
+                                fixed: true
+                            }, {
+                                field: 'username',
+                                title: '主产品ID',
+                                width: 530
+                            }, {
+                                field: 'sex',
+                                title: '主产品名称',
+                                width: 530,
+                                sort: true
+                            }, {
+                                field: 'optinon',
+                                title: '操作',
+                                width: 530,
+                                toolbar: "#barDemo"
+    
+                            }
+                        ]
+                    ],
+                    "data": [
+                        {
+                            id: "1",
+                            username: "test1",
+                            sex: "男"
+                        },
+                        {
+                            id: 2,
+                            username: "test1",
+                            sex: "男"
+                        },
+                        {
+                            id: 3,
+                            username: "test1",
+                            sex: "男"
+                        },
+                        {
+                            id: 4,
+                            username: "test1",
+                            sex: "男"
+                        }, {
+                            id: 5,
+                            username: "test1",
+                            sex: "男"
+                        }, {
+                            id: 6,
+                            username: "test1",
+                            sex: "男"
+                        }, {
+                            id: 7,
+                            username: "test1",
+                            sex: "男"
+                        }, {
+                            id: 8,
+                            username: "test1",
+                            sex: "男"
+                        }, {
+                            id: 9,
+                            username: "test1",
+                            sex: "男"
+                        }, {
+                            id: 10,
+                            username: "test1",
+                            sex: "男"
+                        }
+                    ],
+                    id: 'testReload',
+                    page: true,
+                    height: 473
+                });
+    
+    
+                active = {
+                    reload: function () {
+                        var demoReload = $('#demoReload');
+                        // 执行重载
+                        table.reload('testReload', {
+                            page: {
+                                curr: 1 // 重新从第 1 页开始
+                            },
+                            where: {
+                                key: {
+                                    id: demoReload.val()
+                                }
+                            }
+                        });
+                    }
+                };
+                $('.demoTable .layui-btn').on('click', function () {
+                    var type = $(this).data('type');
+                    active[type] ? active[type].call(this) : '';
+                });
+                $('#addNew').on('click', function () {
+                    $("#page1").hide();
+                });
+                $(document).on("click",".createParent",function(){
+                    layer.open({
+                        title: '',
+                        type: 1,
+                        content: $('#richTextDialog').html(),
+                        area: [
+                            '40%', '70%'
+                        ],
+                        btn: [
+                            '确定', '取消'
+                        ],
+                        success: function () {
+                            var flag = true ; //初始化标识，可以任选
+                            // 右侧选项框有值，左侧框锁定
+                            if(value1.length>0){
+                                flag = false;
+                                transfer.render({
+                                    elem: '#test1',
+                                    title: ['所有产品列表-单选', '已选主产品'],
+                                    data: data1,
+                                    width : 250,
+                                    height : 400,
+                                    value: value1, 
+                                    id: 'key123' // 定义唯一索引
+                                })
+                            }else{
+                                flag = true ;
+                                transfer.render({
+                                    elem: '#test1',
+                                    title: ['所有产品列表-单选', '已选主产品'],
+                                    width : 250,
+                                    height : 400,
+                                    data: data1,
+                                    id: 'key123' // 定义唯一索引
+                                })
+                            }
+                            // 批量办法定事件
+                            util.event('lay-demoTransferActive', {
+                                reload: function () { // 实例重载
+                                    transfer.reload('key123', {
+                                        elem: '#test1',
+                                        title: ['所有产品列表-单选', '已选主产品'],
+                                        width : 250,
+                                        height : 400,
+                                        value: valueall,
+                                    })
+                                    flag = true ;
+                                    changeCSS(flag);
+                                },
+                                search:function(){
+                                    var datacheck = [];
+                                    let checkdata1 = $("#checkdata1").val();//获取查询数据
+                                    for(var i = 0 ; i<data1.length ; i++){
+                                        if(data1[i].title.indexOf(checkdata1)>0){
+                                            datacheck.push(data1[i]);
+                                        }
+                                    }
+                                    transfer.render({
+                                        elem: '#test1',
+                                        title: ['所有产品列表-单选', '已选主产品'],
+                                        width : 250,
+                                        height : 400,
+                                        data: datacheck,
+                                        id: 'key123' // 定义唯一索引
+                                    })
+                                    // //查询完初始化
+                                    // flag = true;
+                                    changeCSS(flag);
+                                }
+                            })
+                            changeCSS(flag);
+                        },
+                        yes: function (index, layero) {
+                            var getData = transfer.getData('key123'); // 获取右侧数据
+                            if((getData.length||0)!=0){
+                                $("#noInfo1").hide();
+                                $("#grand").show();
+                                value1 = getData[0].value;
+                                granddata = getData[0].title;
+                                $("#grand>li>div").html(granddata);
+                            }else{
+                                $("#noInfo1").show();
+                                $("#grand").hide();
+                            }
+                            layer.close(index);
+                        },
+                        btn2: function (index, layero) {
+                        }
+                    });
+                });
+                $(document).on("click",".getChild",function(){
+                    //更换判断标识
+                    layer.open({
+                        title: '',
+                        type: 1,
+                        content: $('#richTextDialog').html(),
+                        area: [
+                            '40%', '70%'
+                        ],
+                        btn: [
+                            '确定', '取消'
+                        ],
+                        success: function () {
+                            var flag = true ; //初始化标识，可以任选
+                            // 右侧选项框有值，左侧框锁定
+                            if(value2.length>0){
+                                flag = false;
+                                transfer.render({
+                                    elem: '#test1',
+                                    title: ['所有产品列表-单选', '已选主产品'],
+                                    data: data2,
+                                    width : 250,
+                                    height : 400,
+                                    value: value2,
+                                    id: 'key123'
+                                })
+                            }else{
+                                flag = true ;
+                                transfer.render({
+                                    elem: '#test1',
+                                    title: ['所有产品列表-单选', '已选主产品'],
+                                    width : 250,
+                                    height : 400,
+                                    data: data2,
+                                    id: 'key123' // 定义唯一索引
+                                })
+                            }
+                            // 批量办法定事件
+                            util.event('lay-demoTransferActive', {
+                                reload: function () { // 实例重载
+                                    transfer.reload('key123', {
+                                        elem: '#test1',
+                                        title: ['所有产品列表-单选', '已选主产品'],
+                                        width : 250,
+                                        height : 400,
+                                        value: valueall,
+                                    })
+                                    flag = true ;
+                                },
+                                search:function(){
+                                    var datacheck = [];
+                                    let checkdata1 = $("#checkdata1").val();//获取查询数据
+                                    for(var i = 0 ; i<data2.length ; i++){
+                                        if(data2[i].title.indexOf(checkdata1)>0){
+                                            datacheck.push(data2[i]);
+                                        }
+                                    }
+                                    transfer.render({
+                                        elem: '#test1',
+                                        title: ['所有产品列表-单选', '已选主产品'],
+                                        width : 250,
+                                        height : 400,
+                                        data: datacheck,
+                                        id: 'key123' // 定义唯一索引
+                                    })
+                                    // //查询完初始化
+                                    // flag = true;
+                                }
+                            })
+                        },
+                        yes: function (index, layero) {
+                            var data = "";
+                            var dat222= transfer.getData('key123'); // 获取右侧数据
+                            //需要判断是否已经加入到计数数组中，去重-逻辑未修改
+                            if((dat222.length||0)!=0){
+                                $("#noInfo2").hide();
+                                $("#fellow").show();
+                                //初始化DOM
+                                $("#fellow").html("");
+                                for(let i = 0 ; i<dat222.length;i++){
+                                    $("#fellow").append(liDom(dat222[i].title,dat222[i].value));
+                                    value2.push(dat222[i].value);
+                                }
+                                value2 = ArrayRemoveRepeat( value2 );
+                                //未生效
+                                $("#fellow").children("li").focus(function(){
+                                    $(this).children(".dataclose").show();
+                                })
+                                $(document).on("blur","#fellow>li",function(){
+                                    $(this).children(".dataclose").hide();
+                                })
+                            }else{
+                                $("#noInfo2").show();
+                                $("#fellow").hide();
+                            }
+                            coltrolElement(value2,transfer,util,data3,value3);
+                            layer.close(index);
+                        },
+                        btn2: function (index, layero) {
+                        }
+                    });
+                });
+
+                
+                $(document).on("click",".getSon",function(){
+                    //更换判断标识
+                    layer.open({
+                        title: '',
+                        type: 1,
+                        content: $('#richTextDialog').html(),
+                        area: [
+                            '40%', '70%'
+                        ],
+                        btn: [
+                            '确定', '取消'
+                        ],
+                        success: function () {
+                            var flag = true ; //初始化标识，可以任选
+                            // 右侧选项框有值，左侧框锁定
+                            if(value2.length>0){
+                                flag = false;
+                                transfer.render({
+                                    elem: '#test1',
+                                    title: ['所有产品列表-单选', '已选主产品'],
+                                    data: data3,
+                                    width : 250,
+                                    height : 400,
+                                    value: value2,
+                                    id: 'key123'
+                                })
+                            }else{
+                                flag = true ;
+                                transfer.render({
+                                    elem: '#test1',
+                                    title: ['所有产品列表-单选', '已选主产品'],
+                                    width : 250,
+                                    height : 400,
+                                    data: data3,
+                                    id: 'key123' // 定义唯一索引
+                                })
+                            }
+                            // 批量办法定事件
+                            util.event('lay-demoTransferActive', {
+                                reload: function () { // 实例重载
+                                    transfer.reload('key123', {
+                                        elem: '#test1',
+                                        title: ['所有产品列表-单选', '已选主产品'],
+                                        width : 250,
+                                        height : 400,
+                                        value: valueall,
+                                    })
+                                    flag = true ;
+                                },
+                                search:function(){
+                                    var datacheck = [];
+                                    let checkdata1 = $("#checkdata1").val();//获取查询数据
+                                    for(var i = 0 ; i<data3.length ; i++){
+                                        if(data3[i].title.indexOf(checkdata1)>0){
+                                            datacheck.push(data3[i]);
+                                        }
+                                    }
+                                    transfer.render({
+                                        elem: '#test1',
+                                        title: ['所有产品列表-单选', '已选主产品'],
+                                        width : 250,
+                                        height : 400,
+                                        data: datacheck,
+                                        id: 'key123' // 定义唯一索引
+                                    })
+                                    // //查询完初始化
+                                    // flag = true;
+                                }
+                            })
+                        },
+                        yes: function (index, layero) {
+                            var data = "";
+                            var dat333= transfer.getData('key123'); // 获取右侧数据
+                            //需要判断是否已经加入到计数数组中，去重-逻辑未修改
+                            if((dat333.length||0)!=0){
+                                $("#noInfo3").hide();
+                                $("#son").show();
+                                //初始化DOM
+                                $("#son").html("");
+                                for(let i = 0 ; i<dat333.length;i++){
+                                    $("#son").append(liDomSon(dat333[i].title,dat333[i].value));
+                                    value3.push(dat333[i].value);
+                                }
+                                value3 = ArrayRemoveRepeat( value3 );
+                                // $("#fellow>li").focus(function(){
+                                //     $(this).children(".dataclose").show();
+                                // })
+                                // $("#fellow>li").blur(function(){
+                                //     $(this).children(".dataclose").hide();
+                                // })
+                                //未生效
+                            }else{
+                                $("#noInfo3").show();
+                                $("#son").hide();
+                            }
+                            coltrolElement(value3);
+                            layer.close(index);
+                        },
+                        btn2: function (index, layero) {
+                        }
+                    });
+                });
+            });
+    
+        }); 
+        function ArrayRemoveRepeat(arr2){
+            let new_arr=[];
+            for(var i=0;i<arr2.length;i++) {  
+                var items=arr2[i];  
+                //判断元素是否存在于new_arr中，如果不存在则插入到new_ar中
+                if($.inArray(items,new_arr)==-1) {  
+                    new_arr.push(items);  
+                }  
+            } 
+            return new_arr;
+        }
+        function liDom(div,input){
+             // htmlDemo2:
+            // <li style="background-color: lightskyblue;height: 30px; line-height: 30px;padding-left: 15px;">
+            //     <div style="width: 95%;float: left;text-align: left;width: 90%;">div</div>
+            //     <input type="hidden" value="input">
+            //     <i class="layui-icon layui-icon-close-fill dataclose" style="display:none;"></i>
+            //     <i class="layui-icon layui-icon-triangle-r getSon" style="float: right;"></i>
+            // </li>
+            // 隐藏需要这个样式，后续需要添加上style="display:none;"
+            var htmlDemo2='<li style="background-color: lightskyblue;height: 30px; line-height: 30px;padding-left: 15px;"><div style="width: 95%;float: left;text-align: left;width: 90%;">'+div+'</div><input type="hidden" value="'+input+'"><i class="layui-icon layui-icon-close-fill dataclose"></i><i class="layui-icon layui-icon-triangle-r getSon" style="float: right;"></i></li>';
+            return htmlDemo2;
+        }
+        function liDomSon(div,input){
+            var htmlDemo3='<li style="background-color: lightskyblue;height: 30px; line-height: 30px;padding-left: 15px;"><div style="width: 95%;float: left;text-align: left;width: 90%;">'+div+'</div><input type="hidden" value="'+input+'">';
+            return htmlDemo3;
+        }
+        function coltrolElement(value2,transfer,util,data3,value3){
+            $(".dataclose").click(function(){
+                let value = $(this).prev("input").val();
+                value2.splice($.inArray(value,value2),1);
+                $(this).parent("li").remove();
+                if(value2.length<=0){
+                    $("#noInfo2").show();
+                    $("#fellow").hide();
+                }
+            });
+        }
+        function changeCSS(flag){
+            if(!flag){
+                if($(".layui-transfer-box").attr("data-index")==0){
+                    $(".layui-transfer-box").children("ul").children("li").siblings().children("input").attr("disabled","disabled");
+                    $(".layui-transfer-box").children("ul").children("li").siblings().children("div").addClass("layui-checkbox-disbaled" );
+                    $(".layui-transfer-box").children("ul").children("li").siblings().children("div").addClass("layui-disabled");
+                }
+            }
+            $(".layui-icon-prev").parent().click(function(){    
+                flag = true ;
+                $(".layui-transfer-box").children("ul").children().children("input").removeAttr("disabled","");
+                $(".layui-transfer-box").children("ul").children().children("div").removeClass("layui-checkbox-disbaled" );
+                $(".layui-transfer-box").children("ul").children().children("div").removeClass("layui-disabled");
+            })
+            $(".layui-transfer-data>li").click(function(){
+                if(flag){
+                        $(this).siblings().children("input").attr("disabled","disabled");
+                        $(this).siblings().children("div").addClass("layui-checkbox-disbaled");
+                        $(this).siblings().children("div").addClass("layui-disabled");
+                    flag = false;
+                }else{
+                    $(this).parent().children().children("input").removeAttr("disabled","");
+                    $(this).parent().children().children("div").removeClass("layui-checkbox-disbaled");
+                    $(this).parent().children().children("div").removeClass("layui-disabled");
+                    flag = true ;
+                }
+            })
+        }
+    </script>
+</html> 
